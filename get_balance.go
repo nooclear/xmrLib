@@ -28,7 +28,7 @@ type balanceParams struct {
 func (wallet *Wallet) GetBalance(id string, params balanceParams) ([]byte, error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
-			Version: "2.0",
+			Version: JRPCVersion,
 			ID:      id,
 			Method:  "get_balance",
 			Params:  convertToMap(json.Marshal(params)),

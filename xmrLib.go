@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+var JRPCVersion = "2.0"
+
 // convertToMap converts a JSON-encoded byte slice into a map[string]interface{}.
 // Returns nil if an error occurs during unmarshalling or if the input error is not nil.
 func convertToMap(data []byte, err error) map[string]interface{} {

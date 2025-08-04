@@ -11,7 +11,7 @@ import (
 func (wallet *Wallet) GetLanguages(id string) ([]byte, error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
-			Version: "2.0",
+			Version: JRPCVersion,
 			ID:      id,
 			Method:  "get_languages",
 			Params:  nil,
