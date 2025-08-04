@@ -6,7 +6,8 @@ import (
 	"io"
 )
 
-// GetHeight retrieves the current blockchain height using a JSON-RPC call with the provided ID. Returns the height as a byte slice or an error.
+// GetHeight retrieves the current blockchain height via JSON-RPC using the provided ID.
+// Returns the height as a JSON-encoded byte slice, or an error if the request fails.
 func (wallet *Wallet) GetHeight(id string) ([]byte, error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
