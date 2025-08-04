@@ -2,9 +2,7 @@ package xmrLib
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/nooclear/jrpcLib"
-	"io"
 )
 
 /*
@@ -38,15 +36,6 @@ func (wallet *Wallet) GetBalance(id string, params balanceParams) ([]byte, error
 		defer func() {
 			err = res.Body.Close() // need to find a proper way to handle these errors
 		}()
-		switch res.StatusCode {
-		case 200:
-			if data, err := io.ReadAll(res.Body); err != nil {
-				return nil, err
-			} else {
-				return data, nil
-			}
-		default:
-			return nil, errors.New(res.Status)
-		}
+		return checkStatus(res)
 	}
 }

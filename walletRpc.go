@@ -9,6 +9,9 @@ import (
 type Wallet struct {
 	jrpcLib.Destination
 }
+type WalletResponse struct {
+	jrpcLib.JRPCResult
+}
 
 // NewWallet creates and returns a new Wallet instance configured with the specified HTTP client and connection details.
 func NewWallet(client *http.Client, method, protocol, ip string, port int, path string) *Wallet {
