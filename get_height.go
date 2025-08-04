@@ -2,25 +2,22 @@ package xmrLib
 
 import (
 	"errors"
-	"fmt"
 	"github.com/nooclear/jrpcLib"
 	"io"
 )
 
-func (wallet *Wallet) GetHeight() ([]byte, error) {
+func (wallet *Wallet) GetHeight(id string) ([]byte, error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: "2.0",
-			ID:      "",
+			ID:      id,
 			Method:  "get_height",
-			Params:  map[string]interface{}{},
+			Params:  nil,
 		}); err != nil {
 		return nil, err
 	} else {
 		defer func() {
-			if err = res.Body.Close(); err != nil {
-				fmt.Println(err)
-			}
+			err = res.Body.Close() // need to find a way to properly handle these errors
 		}()
 		switch res.StatusCode {
 		case 200:
