@@ -6,6 +6,7 @@ import (
 	"io"
 )
 
+// GetVersion retrieves the wallet's version via JSON-RPC using the provided ID and returns it as a byte slice or an error.
 func (wallet *Wallet) GetVersion(id string) ([]byte, error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{

@@ -5,10 +5,12 @@ import (
 	"net/http"
 )
 
+// Wallet represents a JSON-RPC client destination for interacting with wallet-related functionalities.
 type Wallet struct {
 	jrpcLib.Destination
 }
 
+// NewWallet creates and returns a new Wallet instance configured with the specified HTTP client and connection details.
 func NewWallet(client *http.Client, method, protocol, ip string, port int, path string) *Wallet {
 	return &Wallet{
 		Destination: jrpcLib.Destination{

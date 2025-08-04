@@ -6,6 +6,8 @@ import (
 	"io"
 )
 
+// GetLanguages retrieves a list of supported languages for the wallet.
+// Executes a JSON-RPC call with the specified ID and returns the result as a JSON-encoded byte slice or an error.
 func (wallet *Wallet) GetLanguages(id string) ([]byte, error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
