@@ -1,8 +1,9 @@
 package xmrLib
 
 import (
-	"github.com/nooclear/jrpcLib"
 	"net/http"
+
+	"github.com/nooclear/jrpcLib"
 )
 
 // Wallet represents a JSON-RPC client destination for interacting with wallet-related functionalities.

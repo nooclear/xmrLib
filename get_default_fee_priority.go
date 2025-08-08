@@ -1,5 +1,6 @@
 package xmrLib
 
+/*
 import (
 	"github.com/nooclear/jrpcLib"
 )
@@ -20,3 +21,4 @@ func (wallet *Wallet) GetDefaultFeePriority(id string) ([]byte, error) {
 		return checkStatus(res)
 	}
 }
+*/
