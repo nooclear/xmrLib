@@ -1,11 +1,16 @@
 package xmrLib
 
-/*
 import (
+	"encoding/json"
+
 	"github.com/nooclear/jrpcLib"
 )
 
-func (wallet *Wallet) GetDefaultFeePriority(id string) ([]byte, error) {
+type DefaultFeePriorityResult struct {
+	FeePriority uint64 `json:"fee_priority"`
+}
+
+func (wallet *Wallet) GetDefaultFeePriority(id string) (defRes DefaultFeePriorityResult, err error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
@@ -13,12 +18,21 @@ func (wallet *Wallet) GetDefaultFeePriority(id string) ([]byte, error) {
 			Method:  "get_default_fee_priority",
 			Params:  nil,
 		}); err != nil {
-		return nil, err
+		return defRes, err
 	} else {
-		defer func() {
-			err = res.Body.Close() // need to find a way to properly handle these errors
-		}()
-		return checkStatus(res)
+		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+			return defRes, err
+		} else {
+			return convertToDefaultFeePriorityResult(jrpcRes.Result)
+		}
 	}
 }
-*/
+
+func convertToDefaultFeePriorityResult(data map[string]interface{}) (result DefaultFeePriorityResult, err error) {
+	if bytes, err := json.Marshal(data); err != nil {
+		return result, err
+	} else {
+		err = json.Unmarshal(bytes, &result)
+		return result, err
+	}
+}

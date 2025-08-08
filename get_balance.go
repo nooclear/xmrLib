@@ -14,7 +14,7 @@ strict - boolean; (Defaults to false) all changes go to 0-th subaddress (in the 
 */
 
 // balanceParams defines the parameters for querying wallet balance via JSON-RPC calls.
-type balanceParams struct {
+type BalanceParams struct {
 	AccountIndex   uint64   `json:"account_index"`
 	AddressIndices []uint64 `json:"address_indices"`
 	AllAccounts    bool     `json:"all_accounts"`
@@ -32,7 +32,7 @@ type BalanceResult struct {
 // GetBalance retrieves the balance details for a wallet based on the given parameters.
 // It uses a JSON-RPC call with specified ID and parameters.
 // Returns the balance as a JSON-encoded byte slice, or an error if the request fails.
-func (wallet *Wallet) GetBalance(id string, params balanceParams) (balRes BalanceResult, err error) {
+func (wallet *Wallet) GetBalance(id string, params BalanceParams) (balRes BalanceResult, err error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
