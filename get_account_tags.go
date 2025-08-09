@@ -1,9 +1,6 @@
 package xmrLib
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"github.com/nooclear/jrpcLib"
 )
 
@@ -25,21 +22,10 @@ func (wallet *Wallet) GetAccountTags(id string) (result GetAccountTagsResponse, 
 		}); err != nil {
 		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
 			return result, err
 		} else {
-			fmt.Println(jrpcRes.Result)
-			return convertToAccountTagsResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToAccountTagsResult(data map[string]interface{}) (result GetAccountTagsResponse, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		fmt.Println(string(bytes))
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

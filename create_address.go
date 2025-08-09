@@ -19,29 +19,20 @@ type CreateAddressResult struct {
 	Addresses      []string `json:"addresses"`
 }
 
-func (wallet *Wallet) CreateAddress(id string, params CreateAddressParams) (createaddrResult CreateAddressResult, err error) {
+func (wallet *Wallet) CreateAddress(id string, params CreateAddressParams) (result CreateAddressResult, err error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
 			ID:      id,
 			Method:  "create_address",
-			Params:  convertToMap(json.Marshal(params)),
+			Params:  bytesToMap(json.Marshal(params)),
 		}); err != nil {
-		return createaddrResult, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return createaddrResult, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToCreateAddressResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToCreateAddressResult(data map[string]interface{}) (result CreateAddressResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

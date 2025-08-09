@@ -3,7 +3,6 @@ package xmrLib
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/nooclear/jrpcLib"
 )
@@ -19,17 +18,16 @@ func (wallet *Wallet) LabelAccount(id string, params LabelAccountParams) (err er
 			Version: JRPCVersion,
 			ID:      id,
 			Method:  "label_account",
-			Params:  convertToMap(json.Marshal(params)),
+			Params:  bytesToMap(json.Marshal(params)),
 		}); err != nil {
 		return err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
 			return err
 		} else {
 			if len(jrpcRes.Result) == 0 {
 				return nil
 			} else {
-				fmt.Println(jrpcRes.Result)
 				return errors.New("label account failed")
 			}
 		}

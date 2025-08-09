@@ -25,23 +25,14 @@ func (wallet *Wallet) ParseURI(id string, params ParseUriParams) (result ParseUr
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "parse_uri",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
 		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
 			return result, err
 		} else {
-			return convertToParseURIResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToParseURIResult(data map[string]interface{}) (result ParseUriResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

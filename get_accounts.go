@@ -44,29 +44,20 @@ type AccountsResult struct {
 
 // GetAccounts retrieves account details for a wallet using the specified ID via JSON-RPC.
 // Returns the account information as a JSON-encoded byte slice or an error if the request fails.
-func (wallet *Wallet) GetAccounts(id string, params accountsParams) (accsResult AccountsResult, err error) {
+func (wallet *Wallet) GetAccounts(id string, params accountsParams) (result AccountsResult, err error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
 			ID:      id,
 			Method:  "get_accounts",
-			Params:  convertToMap(json.Marshal(params)),
+			Params:  bytesToMap(json.Marshal(params)),
 		}); err != nil {
-		return accsResult, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return accsResult, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToAccountsResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToAccountsResult(data map[string]interface{}) (result AccountsResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

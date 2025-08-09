@@ -15,28 +15,19 @@ type SplitIntegratedAddressResult struct {
 	StandardAddress string `json:"standard_address"`
 }
 
-func (wallet *Wallet) SplitIntegratedAddress(id string, params SplitIntegratedAddressParams) (siaRes SplitIntegratedAddressResult, err error) {
+func (wallet *Wallet) SplitIntegratedAddress(id string, params SplitIntegratedAddressParams) (result SplitIntegratedAddressResult, err error) {
 	if res, err := wallet.Call(&jrpcLib.JRPC{
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "split_integrated_address",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
-		return siaRes, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return siaRes, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToSplitIntegratedAddressResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToSplitIntegratedAddressResult(data map[string]interface{}) (result SplitIntegratedAddressResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

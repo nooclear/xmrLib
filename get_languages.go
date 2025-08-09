@@ -13,7 +13,7 @@ type LanguagesResult struct {
 
 // GetLanguages retrieves a list of supported languages for the wallet.
 // Executes a JSON-RPC call with the specified ID and returns the result as a JSON-encoded byte slice or an error.
-func (wallet *Wallet) GetLanguages(id string) (langResult LanguagesResult, err error) {
+func (wallet *Wallet) GetLanguages(id string) (result LanguagesResult, err error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
@@ -21,12 +21,12 @@ func (wallet *Wallet) GetLanguages(id string) (langResult LanguagesResult, err e
 			Method:  "get_languages",
 			Params:  nil,
 		}); err != nil {
-		return langResult, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return langResult, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToLanguagesResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
 	}
 }

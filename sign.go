@@ -18,23 +18,14 @@ func (wallet *Wallet) Sign(id string, params SignParams) (result SignResult, err
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "sign",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
 		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
 			return result, err
 		} else {
-			return convertToSignResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToSignResult(data map[string]interface{}) (result SignResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

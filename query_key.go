@@ -25,23 +25,14 @@ func (wallet *Wallet) QueryKey(id string, params QueryKeyParams) (result QueryKe
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "query_key",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
 		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
 			return result, err
 		} else {
-			return convertToQueryKeyResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToQueryKeyResult(data map[string]interface{}) (result QueryKeyResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

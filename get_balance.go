@@ -32,29 +32,20 @@ type BalanceResult struct {
 // GetBalance retrieves the balance details for a wallet based on the given parameters.
 // It uses a JSON-RPC call with specified ID and parameters.
 // Returns the balance as a JSON-encoded byte slice, or an error if the request fails.
-func (wallet *Wallet) GetBalance(id string, params BalanceParams) (balRes BalanceResult, err error) {
+func (wallet *Wallet) GetBalance(id string, params BalanceParams) (result BalanceResult, err error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
 			ID:      id,
 			Method:  "get_balance",
-			Params:  convertToMap(json.Marshal(params)),
+			Params:  bytesToMap(json.Marshal(params)),
 		}); err != nil {
-		return balRes, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return balRes, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToBalancetResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToBalancetResult(data map[string]interface{}) (result BalanceResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

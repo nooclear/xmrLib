@@ -25,23 +25,14 @@ func (wallet *Wallet) ValidateAddress(id string, params ValidateAddressParams) (
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "validate_address",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
 		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
 			return result, err
 		} else {
-			return convertToValidateAddressResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToValidateAddressResult(data map[string]interface{}) (result ValidateAddressResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

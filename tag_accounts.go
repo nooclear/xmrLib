@@ -17,11 +17,11 @@ func (wallet *Wallet) TagAccounts(id string, params TagAccountsParams) (err erro
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "tag_accounts",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
 		return err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
 			return err
 		} else {
 			if len(jrpcRes.Result) == 0 {

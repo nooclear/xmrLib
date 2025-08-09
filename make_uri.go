@@ -18,28 +18,19 @@ type MakeUriResult struct {
 	URI string `json:"uri"`
 }
 
-func (wallet *Wallet) MakeUri(id string, params MakeUriParams) (uriRes MakeUriResult, err error) {
+func (wallet *Wallet) MakeUri(id string, params MakeUriParams) (result MakeUriResult, err error) {
 	if res, err := wallet.Call(&jrpcLib.JRPC{
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "make_uri",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
-		return uriRes, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return uriRes, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToMakeUriResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToMakeUriResult(data map[string]interface{}) (result MakeUriResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

@@ -15,28 +15,19 @@ type MakeIntegratedAddressResult struct {
 	PaymentID         string `json:"payment_id"`
 }
 
-func (wallet *Wallet) MakeIntegratedAddress(id string, params MakeIntegratedAddressParams) (miaRes MakeIntegratedAddressResult, err error) {
+func (wallet *Wallet) MakeIntegratedAddress(id string, params MakeIntegratedAddressParams) (result MakeIntegratedAddressResult, err error) {
 	if res, err := wallet.Call(&jrpcLib.JRPC{
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "make_integrated_address",
-		Params:  convertToMap(json.Marshal(params)),
+		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
-		return miaRes, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return miaRes, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToIntegratedAddressResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToIntegratedAddressResult(data map[string]interface{}) (result MakeIntegratedAddressResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }

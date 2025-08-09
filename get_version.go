@@ -1,8 +1,6 @@
 package xmrLib
 
 import (
-	"encoding/json"
-
 	"github.com/nooclear/jrpcLib"
 )
 
@@ -12,7 +10,7 @@ type VersionResult struct {
 }
 
 // GetVersion retrieves the wallet's version via JSON-RPC using the provided ID and returns it as a byte slice or an error.
-func (wallet *Wallet) GetVersion(id string) (verRes VersionResult, err error) {
+func (wallet *Wallet) GetVersion(id string) (result VersionResult, err error) {
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
@@ -20,21 +18,12 @@ func (wallet *Wallet) GetVersion(id string) (verRes VersionResult, err error) {
 			Method:  "get_version",
 			Params:  nil,
 		}); err != nil {
-		return verRes, err
+		return result, err
 	} else {
-		if jrpcRes, err := convertToJRPCResult(res.Body); err != nil {
-			return verRes, err
+		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+			return result, err
 		} else {
-			return convertToVersionResult(jrpcRes.Result)
+			return result, mapToStruct(jrpcRes.Result, &result)
 		}
-	}
-}
-
-func convertToVersionResult(data map[string]interface{}) (result VersionResult, err error) {
-	if bytes, err := json.Marshal(data); err != nil {
-		return result, err
-	} else {
-		err = json.Unmarshal(bytes, &result)
-		return result, err
 	}
 }
