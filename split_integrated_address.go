@@ -9,6 +9,7 @@ import (
 type SplitIntegratedAddressParams struct {
 	IntegratedAddress string `json:"integrated_address"`
 }
+
 type SplitIntegratedAddressResult struct {
 	IsSubaddress    bool   `json:"is_subaddress"`
 	PaymentID       string `json:"payment_id"`

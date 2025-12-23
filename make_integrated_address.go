@@ -7,9 +7,10 @@ import (
 )
 
 type MakeIntegratedAddressParams struct {
-	StandardAddress string `json:"standard_address"`
 	PaymentID       string `json:"payment_id"`
+	StandardAddress string `json:"standard_address"`
 }
+
 type MakeIntegratedAddressResult struct {
 	IntegratedAddress string `json:"integrated_address"`
 	PaymentID         string `json:"payment_id"`
