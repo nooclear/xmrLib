@@ -18,8 +18,8 @@ type WalletResponse struct {
 
 // NewWallet creates and returns a new Wallet instance configured with the specified HTTP client and connection details.
 func NewWallet(client *http.Client, method, protocol, ip string, port int, path string) *Wallet {
-	if DebugLevel >= DebugLevel2 {
-		aLog.Debug(aLog.Log{Sender: "xmrLib:NewWallet", Message: fmt.Sprintf("Creating New Client:\tClient: %v Method: %s Protocol: %s IP: %s Port: %d Path: %s", client, method, protocol, ip, port, path)})
+	if DebugLevel >= DebugLevel1 {
+		aLog.Debug("xmrLib:NewWallet", fmt.Sprintf("Creating New Client:\tClient: %v Method: %s Protocol: %s IP: %s Port: %d Path: %s", client, method, protocol, ip, port, path))
 	}
 	return &Wallet{
 		Destination: jrpcLib.Destination{

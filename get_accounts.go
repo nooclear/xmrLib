@@ -2,7 +2,9 @@ package xmrLib
 
 import (
 	"encoding/json"
+	"fmt"
 
+	aLog "github.com/nooclear/AdvancedLogging"
 	"github.com/nooclear/jrpcLib"
 )
 
@@ -45,6 +47,9 @@ type AccountsResult struct {
 // GetAccounts retrieves account details for a wallet using the specified ID via JSON-RPC.
 // Returns the account information as a JSON-encoded byte slice or an error if the request fails.
 func (wallet *Wallet) GetAccounts(id string, params accountsParams) (result AccountsResult, err error) {
+	if DebugLevel >= DebugLevel1 {
+		aLog.Debug("xmrLib:get_accounts:start", fmt.Sprintf("wallet: %v", wallet))
+	}
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
@@ -52,12 +57,13 @@ func (wallet *Wallet) GetAccounts(id string, params accountsParams) (result Acco
 			Method:  "get_accounts",
 			Params:  bytesToMap(json.Marshal(params)),
 		}); err != nil {
+		aLog.Error("xmrLib:get_accounts", fmt.Sprintf("error: %v", err))
+		return result, err
+	} else if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+		aLog.Error("xmrLib:get_accounts:jrpcRes", fmt.Sprintf("error: %v", err))
 		return result, err
 	} else {
-		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
-			return result, err
-		} else {
-			return result, mapToStruct(jrpcRes.Result, &result)
-		}
+		aLog.Success("xmrLib:get_accounts:success", fmt.Sprintf("wallet: %v", wallet))
+		return result, mapToStruct(jrpcRes.Result, &result)
 	}
 }

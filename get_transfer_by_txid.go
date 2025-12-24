@@ -2,7 +2,9 @@ package xmrLib
 
 import (
 	"encoding/json"
+	"fmt"
 
+	aLog "github.com/nooclear/AdvancedLogging"
 	"github.com/nooclear/jrpcLib"
 )
 
@@ -42,18 +44,22 @@ type GetTransferByTxIDResult struct {
 }
 
 func (wallet *Wallet) GetTransferByTxID(id string, params GetTransferByTxIDParams) (result GetTransferByTxIDResult, err error) {
+	if DebugLevel >= DebugLevel1 {
+		aLog.Debug("xmrLib:get_transfer_by_tx_id:start", fmt.Sprintf("wallet: %v", wallet))
+	}
 	if res, err := wallet.Call(&jrpcLib.JRPC{
 		Version: JRPCVersion,
 		ID:      id,
 		Method:  "get_transfer_by_tx_id",
 		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
+		aLog.Error("xmrLib:get_transfer_by_tx_id", fmt.Sprintf("error: %v", err))
+		return result, err
+	} else if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+		aLog.Error("xmrLib:get_transfer_by_tx_id:jrpcRes", fmt.Sprintf("error: %v", err))
 		return result, err
 	} else {
-		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
-			return result, err
-		} else {
-			return result, mapToStruct(jrpcRes.Result, &result)
-		}
+		aLog.Success("xmrLib:get_transfer_by_tx_id:success", fmt.Sprintf("wallet: %v", wallet))
+		return result, mapToStruct(jrpcRes.Result, &result)
 	}
 }

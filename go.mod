@@ -1,9 +1,23 @@
 module github.com/nooclear/xmrLib
 
-go 1.25.1
+go 1.25.5
 
 require (
 	github.com/icholy/digest v1.1.0
-	github.com/nooclear/AdvancedLogging v0.0.0-20250714181835-d4be84fd8bb8
+	github.com/nooclear/AdvancedLogging v0.0.0-20251130042403-4701af5143e1
 	github.com/nooclear/jrpcLib v0.0.0-20250807195506-58d190e698a9
+)
+
+require (
+	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/ncruces/go-strftime v1.0.0 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93 // indirect
+	golang.org/x/sys v0.39.0 // indirect
+	modernc.org/libc v1.67.1 // indirect
+	modernc.org/mathutil v1.7.1 // indirect
+	modernc.org/memory v1.11.0 // indirect
+	modernc.org/sqlite v1.41.0 // indirect
 )

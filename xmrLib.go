@@ -25,17 +25,17 @@ var JRPCVersion = "2.0"
 // Returns nil if an error occurs during unmarshalling or if the input error is not nil.
 func bytesToMap(data []byte, err error) map[string]interface{} {
 	if err != nil {
-		aLog.Error(aLog.Log{Sender: "xmrLib:bytesToMap", Message: "Error: " + err.Error()})
+		aLog.Error("xmrLib:bytes_to_map", fmt.Sprintf("error: %v", err))
 		return nil
 	} else {
 		var mymap map[string]interface{}
 		if err = json.Unmarshal(data, &mymap); err != nil {
-			aLog.Error(aLog.Log{Sender: "xmrLib:bytesToMap", Message: string(data)})
-			aLog.Error(aLog.Log{Sender: "xmrLib:bytesToMap", Message: "Error: " + err.Error()})
+			aLog.Error("xmrLib:bytes_to_map:unmarshal", fmt.Sprintf("Data: %v", string(data)))
+			aLog.Error("xmrLib:bytesToMap", fmt.Sprintf("Error: %v", err))
 			return nil
 		}
 		if DebugLevel >= DebugLevel1 {
-			aLog.Debug(aLog.Log{Sender: "xmrLib:bytesToMap", Message: mymap})
+			aLog.Debug("xmrLib:bytes_to_map", fmt.Sprintf("map: %v", mymap))
 		}
 		return mymap
 	}
@@ -46,11 +46,11 @@ func bytesToMap(data []byte, err error) map[string]interface{} {
 func bytesToJRPCResult(data []byte) (result *jrpcLib.JRPCResult, err error) {
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		aLog.Error(aLog.Log{Sender: "xmrLib:bytesToJRPCResult", Message: "Data : " + string(data)})
-		aLog.Error(aLog.Log{Sender: "xmrLib:bytesToJRPCResult", Message: "Error: " + err.Error()})
+		aLog.Error("xmrLib:bytes_to_jrpc_result", fmt.Sprintf("Data: %v", string(data)))
+		aLog.Error("xmrLib:bytes_to_jrpc_result", fmt.Sprintf("Error: %v", err))
 	}
 	if DebugLevel >= DebugLevel1 {
-		aLog.Debug(aLog.Log{Sender: "xmrLib:bytesToJRPCResult", Message: "Result : " + fmt.Sprint(result)})
+		aLog.Debug("xmrLib:bytes_to_jrpc_result", fmt.Sprintf("Result: %v", fmt.Sprint(result)))
 	}
 	return result, err
 }
@@ -58,12 +58,12 @@ func bytesToJRPCResult(data []byte) (result *jrpcLib.JRPCResult, err error) {
 // mapToStruct converts a map[string]interface{} into a struct.
 func mapToStruct(data map[string]interface{}, v interface{}) error {
 	if bytes, err := json.Marshal(data); err != nil {
-		aLog.Error(aLog.Log{Sender: "xmrLib:mapToStruct", Message: "Data : " + fmt.Sprint(data)})
-		aLog.Error(aLog.Log{Sender: "xmrLib:mapToStruct", Message: "Error: " + err.Error()})
+		aLog.Error("xmrLib:map_to_struct", fmt.Sprintf("Data: %v", data))
+		aLog.Error("xmrLib:map_to_struct", fmt.Sprintf("Error: %v", err))
 		return err
 	} else {
 		if DebugLevel >= DebugLevel1 {
-			aLog.Debug(aLog.Log{Sender: "xmrLib:mapToStruct", Message: "Bytes : " + string(bytes)})
+			aLog.Debug("xmrLib:map_to_struct", fmt.Sprintf("Bytes: %v", string(bytes)))
 		}
 		return json.Unmarshal(bytes, v)
 	}
@@ -72,14 +72,14 @@ func mapToStruct(data map[string]interface{}, v interface{}) error {
 // Request sends a JSON-RPC request to the daemon and returns the response.
 func (wallet *Wallet) Request(jrpc *jrpcLib.JRPC) (result *jrpcLib.JRPCResult, err error) {
 	if res, err := wallet.Call(jrpc); err != nil {
-		aLog.Error(aLog.Log{Sender: "xmrLib:Request", Message: "Error: " + err.Error()})
+		aLog.Error("xmrLib:request", fmt.Sprintf("Error: %v", err))
 		return nil, err
 	} else {
 		if DebugLevel >= DebugLevel1 {
-			aLog.Debug(aLog.Log{Sender: "xmrLib:Request", Message: "Result : " + fmt.Sprint(res)})
+			aLog.Debug("xmrLib:request", fmt.Sprintf("Result: %v", fmt.Sprint(res)))
 		}
 		if checkStatus(res) != nil {
-			aLog.Debug(aLog.Log{Sender: "xmrLib:Request", Message: fmt.Sprintf("Status: %d Error: %s", res.StatusCode, res.Body)})
+			aLog.Notify("xmrLib:request", fmt.Sprintf("Status: %d\tError: %s", res.StatusCode, res.Body))
 		}
 		return bytesToJRPCResult(res.Body)
 	}

@@ -15,8 +15,8 @@ type AutoRefreshParams struct {
 }
 
 func (wallet *Wallet) AutoRefresh(id string, params AutoRefreshParams) (err error) {
-	if DebugLevel >= DebugLevel3 {
-		aLog.Debug(aLog.Log{Sender: "xmrLib:auto_refresh", Message: fmt.Sprintf("Params: %v", params)})
+	if DebugLevel >= DebugLevel1 {
+		aLog.Debug("xmrLib:auto_refresh:start", fmt.Sprintf("wallet: %v", wallet))
 	}
 	if res, err := wallet.Call(&jrpcLib.JRPC{
 		Version: JRPCVersion,
@@ -24,21 +24,15 @@ func (wallet *Wallet) AutoRefresh(id string, params AutoRefreshParams) (err erro
 		Method:  "auto_refresh",
 		Params:  bytesToMap(json.Marshal(params)),
 	}); err != nil {
-		if DebugLevel >= DebugLevel1 {
-			aLog.Error(aLog.Log{Sender: "xmrLib:auto_refresh", Message: fmt.Errorf("error: %v", err)})
-		}
+		aLog.Error("xmrLib:auto_refresh", fmt.Sprintf("error: %v", err))
 		return err
-	} else {
-		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
-			return err
-		} else {
-			if len(jrpcRes.Result) == 0 {
-				return nil
-			} else {
-				return errors.New("auto refresh failed")
-			}
-		}
+	} else if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+		aLog.Error("xmrLib:auto_refresh:jrpcRes", fmt.Sprintf("error: %v", err))
+		return err
+	} else if len(jrpcRes.Result) != 0 {
+		aLog.Error("xmrLib:auto_refresh:jrpcRes.Result", fmt.Sprintf("result: %v", jrpcRes.Result))
+		return errors.New("auto refresh failed")
 	}
+	aLog.Success("xmrLib:auto_refresh:success", fmt.Sprintf("wallet: %v", wallet))
+	return nil
 }
-
-//working on adding propper debug logging

@@ -2,7 +2,9 @@ package xmrLib
 
 import (
 	"encoding/json"
+	"fmt"
 
+	aLog "github.com/nooclear/AdvancedLogging"
 	"github.com/nooclear/jrpcLib"
 )
 
@@ -18,6 +20,9 @@ type AddressIndexResult struct {
 }
 
 func (wallet *Wallet) GetAddressIndex(id string, params AddressIndexParams) (result AddressIndexResult, err error) {
+	if DebugLevel >= DebugLevel1 {
+		aLog.Debug("xmrLib:get_address_index:start", fmt.Sprintf("wallet: %v", wallet))
+	}
 	if res, err := wallet.Call(
 		&jrpcLib.JRPC{
 			Version: JRPCVersion,
@@ -25,12 +30,13 @@ func (wallet *Wallet) GetAddressIndex(id string, params AddressIndexParams) (res
 			Method:  "get_address_index",
 			Params:  bytesToMap(json.Marshal(params)),
 		}); err != nil {
+		aLog.Error("xmrLib:get_address_index", fmt.Sprintf("error: %v", err))
+		return result, err
+	} else if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
+		aLog.Error("xmrLib:get_address_index:jrpcRes", fmt.Sprintf("error: %v", err))
 		return result, err
 	} else {
-		if jrpcRes, err := bytesToJRPCResult(res.Body); err != nil {
-			return result, err
-		} else {
-			return result, mapToStruct(jrpcRes.Result, &result)
-		}
+		aLog.Success("xmrLib:get_address_index:success", fmt.Sprintf("wallet: %v", wallet))
+		return result, mapToStruct(jrpcRes.Result, &result)
 	}
 }
